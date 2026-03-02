@@ -17,10 +17,18 @@ window.addEventListener('scroll', () => {
   });
 });
 
-// Scroll reveal
-const observer = new IntersectionObserver(
-  entries => entries.forEach(e => e.target.classList.toggle('visible', e.isIntersecting)),
-  { threshold: 0.1 }
+// Scroll reveal — show immediately if already in viewport, animate on scroll for others
+const revealEls = document.querySelectorAll(
+  '.stat-card, .skill-group, .project-card, .timeline-item, .edu-card, .cert-card, .contact-card'
 );
-document.querySelectorAll('.stat-card, .skill-group, .project-card, .timeline-item, .edu-card, .cert-card, .contact-card')
-  .forEach(el => { el.classList.add('reveal'); observer.observe(el); });
+
+revealEls.forEach(el => el.classList.add('reveal'));
+
+const observer = new IntersectionObserver(
+  entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); }),
+  { threshold: 0.08, rootMargin: '0px 0px -20px 0px' }
+);
+
+// Small delay so layout is ready, then observe — fires immediately for visible elements
+setTimeout(() => revealEls.forEach(el => observer.observe(el)), 100);
+
